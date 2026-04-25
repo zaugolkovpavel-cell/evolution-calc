@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Арифмометр Паскаля</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #2a1810 0px,
+                    #2a1810 2px,
+                    #3d2817 2px,
+                    #3d2817 4px
+                ),
+                linear-gradient(180deg, #1a0f0a 0%, #2a1810 50%, #1a0f0a 100%);
+            font-family: 'Playfair Display', serif;
+            padding: 20px;
+        }
+
+        .cabinet {
+            background: linear-gradient(145deg, #5c3a21 0%, #3d2817 50%, #2a1810 100%);
+            border: 8px solid #8b6914;
+            border-radius: 12px;
+            padding: 40px 50px;
+            box-shadow: 
+                inset 0 2px 4px rgba(255,255,255,0.1),
+                0 10px 30px rgba(0,0,0,0.5),
+                0 0 0 4px #6b4c1a,
+                0 0 0 8px #8b6914;
+            position: relative;
+        }
+
+        .cabinet::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid #6b4c1a;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .title {
+            text-align: center;
+            color: #c9a227;
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 3px;
+        }
+
+        .title span {
+            color: #8b6914;
+        }
+
+        .machine {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(180deg, #1a0f0a 0%, #2a1810 100%);
+            border: 4px solid #6b4c1a;
+            border-radius: 8px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .digit-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .column-label {
+            color: #8b7355;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .display-window {
+            width: 80px;
+            height: 100px;
+            background: linear-gradient(180deg, #e8dcc8 0%, #c9b89a 100%);
+            border: 4px solid #6b4c1a;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 56px;
+            font-weight: 500;
+            color: #1a0f0a;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            box-shadow: 
+                inset 0 4px 8px rgba(0,0,0,0.2),
+                0 2px 4px rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display-window::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .plus-btn {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(180deg, #b8860b 0%, #8b6914 50%, #6b4c1a 100%);
+            border: 3px solid #4a3510;
+            border-radius: 8px;
+            color: #1a0f0a;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 
+                0 4px 0 #4a3510,
+                0 6px 8px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.2);
+            transition: all 0.1s;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .plus-btn:hover {
+            background: linear-gradient(180deg, #c9a227 0%, #b8860b 50%, #8b6914 100%);
+        }
+
+        .plus-btn:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 #4a3510,
+                0 3px 4px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.2);
+        }
+
+        .reset-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 12px 30px;
+            background: linear-gradient(180deg, #8b2500 0%, #6b1a00 50%, #4a1000 100%);
+            border: 3px solid #4a3510;
+            border-radius: 6px;
+            color: #c9a227;
+            font-size: 16px;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 
+                0 3px 0 #2a0a00,
+                0 4px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(180deg, #a12d00 0%, #8b2500 50%, #6b1a00 100%);
+        }
+
+        .reset-btn:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 0 #2a0a00,
+                0 2px 3px rgba(0,0,0,0.4);
+        }
+
+        .decorative-screws {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .screw {
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #c9a227 0%, #8b6914 50%, #6b4c1a 100%);
+            border-radius: 50%;
+            box-shadow: 
+                inset 0 2px 2px rgba(255,255,255,0.3),
+                0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .screw::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 10px;
+            height: 2px;
+            background: #4a3510;
+        }
+
+        .total-display {
+            text-align: center;
+            margin-top: 10px;
+            padding: 15px;
+            background: linear-gradient(180deg, #1a0f0a 0%, #2a1810 100%);
+            border: 3px solid #6b4c1a;
+            border-radius: 6px;
+        }
+
+        .total-label {
+            color: #8b7355;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .total-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 36px;
+            color: #c9a227;
+            text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+        }
+
+        @keyframes carry {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); filter: brightness(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .carry-animation {
+            animation: carry 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="cabinet">
+        <div class="decorative-screws">
+            <div class="screw"></div>
+            <div class="screw"></div>
+        </div>
+        
+        <h1 class="title">АРИФМОМЕТРЪ <span>ПАСКАЛЯ</span></h1>
+        
+        <div class="machine">
+            <div class="digit-column">
+                <span class="column-label">Единицы</span>
+                <div class="display-window" id="digit0">0</div>
+                <button class="plus-btn" onclick="add(0)">+1</button>
+            </div>
+            
+            <div class="digit-column">
+                <span class="column-label">Десятки</span>
+                <div class="display-window" id="digit1">0</div>
+                <button class="plus-btn" onclick="add(1)">+1</button>
+            </div>
+            
+            <div class="digit-column">
+                <span class="column-label">Сотни</span>
+                <div class="display-window" id="digit2">0</div>
+                <button class="plus-btn" onclick="add(2)">+1</button>
+            </div>
+        </div>
+        
+        <div class="total-display">
+            <div class="total-label">ИТОГ</div>
+            <div class="total-value" id="total">0</div>
+        </div>
+        
+        <button class="reset-btn" onclick="reset()">СБРОСЪ</button>
+    </div>
+
+    <script>
+        let digits = [0, 0, 0];
+        const maxDigits = [9, 9, 9];
+
+        function updateDisplay() {
+            for (let i = 0; i < 3; i++) {
+                document.getElementById('digit' + i).textContent = digits[i];
+            }
+            const total = digits[0] + digits[1] * 10 + digits[2] * 100;
+            document.getElementById('total').textContent = total;
+        }
+
+        function animateCarry(index) {
+            const display = document.getElementById('digit' + index);
+            display.classList.remove('carry-animation');
+            void display.offsetWidth;
+            display.classList.add('carry-animation');
+        }
+
+        function add(digitIndex) {
+            if (digitIndex === 0) {
+                if (digits[0] < 9) {
+                    digits[0]++;
+                    animateCarry(0);
+                } else {
+                    digits[0] = 0;
+                    animateCarry(0);
+                    if (digits[1] < 9) {
+                        digits[1]++;
+                        animateCarry(1);
+                    } else {
+                        digits[1] = 0;
+                        animateCarry(1);
+                        if (digits[2] < 9) {
+                            digits[2]++;
+                            animateCarry(2);
+                        } else {
+                            digits[2] = 0;
+                            animateCarry(2);
+                        }
+                    }
+                }
+            } else if (digitIndex === 1) {
+                if (digits[1] < 9) {
+                    digits[1]++;
+                    animateCarry(1);
+                } else {
+                    digits[1] = 0;
+                    animateCarry(1);
+                    if (digits[2] < 9) {
+                        digits[2]++;
+                        animateCarry(2);
+                    } else {
+                        digits[2] = 0;
+                        animateCarry(2);
+                    }
+                }
+            } else {
+                if (digits[2] < 9) {
+                    digits[2]++;
+                    animateCarry(2);
+                } else {
+                    digits[2] = 0;
+                    animateCarry(2);
+                }
+            }
+            updateDisplay();
+        }
+
+        function reset() {
+            digits = [0, 0, 0];
+            updateDisplay();
+            for (let i = 0; i < 3; i++) {
+                animateCarry(i);
+            }
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
